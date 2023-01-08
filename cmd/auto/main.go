@@ -128,11 +128,11 @@ func main() {
 				Err(err).
 				Msg("Failed to shutdown HTTP listener")
 		} else {
-			log.Info().Msg("Webserver shutdown succees")
+			log.Info().Msg("Webserver shutdown success")
 		}
 
 		// Libvirt connections
-		log.Info().Msg("Libvirt connections shutdown succees")
+		log.Info().Msg("Libvirt connections shutdown success")
 
 		srvStopCtx()
 	}()
