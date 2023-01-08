@@ -23,6 +23,7 @@ import (
 	"context"
 	"crypto/ed25519"
 	"crypto/rand"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/json"
@@ -99,6 +100,19 @@ func main() {
 	srv := &http.Server{
 		Addr:    config.Config.API.Host + ":" + strconv.Itoa(config.Config.API.Port),
 		Handler: server.Service(),
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS13,
+			CurvePreferences: []tls.CurveID{
+				tls.CurveP521, tls.CurveP384, tls.CurveP256,
+			},
+			PreferServerCipherSuites: true,
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+			},
+		},
 	}
 
 	srvCtx, srvStopCtx := context.WithCancel(context.Background())
