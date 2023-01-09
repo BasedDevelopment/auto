@@ -31,6 +31,7 @@ var (
 	Config struct {
 		Hostname string `koanf:"hostname"`
 		Site     string `koanf:"site"`
+		Remarks  string `koanf:"remarks"`
 		TLSPath  string `koanf:"tls_path"`
 
 		API struct {
@@ -48,11 +49,13 @@ var (
 			Path    string `koanf:"path"`
 			Iso     bool   `koanf:"iso"`
 			Disk    bool   `koanf:"disk"`
+			Remarks string `koanf:"remarks"`
 		} `koanf:"storage"`
 
 		Network map[string]struct {
 			Enabled bool   `koanf:"enabled"`
 			Type    string `koanf:"type"`
+			Remarks string `koanf:"remarks"`
 		}
 	}
 )
