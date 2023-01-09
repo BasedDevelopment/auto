@@ -27,8 +27,8 @@ import (
 
 // Check for required fields in the config file
 func validate() error {
-	if err := validation.Validate(Config.Name, validation.Required, is.DNSName); err != nil {
-		return fmt.Errorf("Configuration: name is not a hostname: %s", err)
+	if err := validation.Validate(Config.Hostname, validation.Required, is.DNSName); err != nil {
+		return fmt.Errorf("Configuration: hostname is not a hostname: %s", err)
 	}
 
 	if Config.TLSPath == "" {
@@ -42,10 +42,6 @@ func validate() error {
 	port := Config.API.Port
 	if (port <= 1) || (port >= 65535) {
 		return fmt.Errorf("Configuration: API port is not a valid port number: %d", port)
-	}
-
-	if err := validation.Validate(Config.Eve.URL, validation.Required, is.URL); err != nil {
-		return fmt.Errorf("Configuration: eve.url is not a valid URL: %s", err)
 	}
 
 	return nil

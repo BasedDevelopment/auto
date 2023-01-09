@@ -19,17 +19,8 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"crypto/ed25519"
-	"crypto/rand"
-	"crypto/tls"
-	"crypto/x509"
-	"crypto/x509/pkix"
-	"encoding/json"
-	"encoding/pem"
 	"flag"
-	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -39,7 +30,6 @@ import (
 
 	"github.com/BasedDevelopment/auto/internal/config"
 	"github.com/BasedDevelopment/auto/internal/server"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -67,30 +57,13 @@ func init() {
 }
 
 func main() {
-	log.Info().Msg("Fetching TLS key")
-	_, err := os.Stat(config.Config.TLSPath + "/auto.key")
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch TLS key")
-		} else {
-			log.Info().Msg("TLS key not found, generating")
-			initCSR()
-			log.Info().Msg("TLS key generated and sent")
-			return
-		}
+	if _, err := os.Stat(config.Config.TLSPath + "/auto.key"); err != nil {
+		log.Fatal().Err(err).Msg("Failed to load TLS key")
 	}
-	log.Info().Msg("TLS key found, fetching TLS certificate")
-	_, err = os.Stat(config.Config.TLSPath + "/auto.pem")
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch TLS certificate")
-		} else {
-			log.Info().Msg("TLS certificate not found, checking eve")
-			//getCert()
-			log.Info().Msg("TLS certificate fetched, starting")
-		}
+	if _, err := os.Stat(config.Config.TLSPath + "/auto.pem"); err != nil {
+		log.Fatal().Err(err).Msg("Failed to load TLS certificate")
 	}
-	log.Info().Msg("TLS certificate found, starting")
+
 	log.Info().
 		Str("host", config.Config.API.Host).
 		Int("port", config.Config.API.Port).
@@ -100,21 +73,6 @@ func main() {
 	srv := &http.Server{
 		Addr:    config.Config.API.Host + ":" + strconv.Itoa(config.Config.API.Port),
 		Handler: server.Service(),
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS13,
-			CurvePreferences: []tls.CurveID{
-				tls.CurveP521, tls.CurveP384, tls.CurveP256,
-			},
-			PreferServerCipherSuites: true,
-			CipherSuites: []uint16{
-				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-			},
-		},
 	}
 
 	srvCtx, srvStopCtx := context.WithCancel(context.Background())
@@ -154,7 +112,7 @@ func main() {
 	}()
 
 	// Start the server
-	err = srv.ListenAndServeTLS(config.Config.TLSPath+"/auto.pem", config.Config.TLSPath+"/auto.key")
+	err := srv.ListenAndServeTLS(config.Config.TLSPath+"/auto.pem", config.Config.TLSPath+"/auto.key")
 
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal().
@@ -165,108 +123,4 @@ func main() {
 	// Wait for server context to be stopped
 	<-srvCtx.Done()
 	log.Info().Msg("Graceful shutdown complete. Thank you for using auto!")
-}
-
-func initCSR() {
-	_, priv, err := ed25519.GenerateKey(rand.Reader)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to generate ed25519 key pair")
-	}
-	privBytes, err := x509.MarshalPKCS8PrivateKey(priv)
-	keyPem := pem.EncodeToMemory(&pem.Block{
-		Type:  "PRIVATE KEY",
-		Bytes: privBytes,
-	})
-	// Save key
-	if err := os.WriteFile(config.Config.TLSPath+"/auto.key", keyPem, 0600); err != nil {
-		log.Fatal().Err(err).Msg("Failed to save TLS key")
-	}
-	// generate CSR
-	csrTemplate := x509.CertificateRequest{
-		Subject: pkix.Name{
-			CommonName: "auto",
-		},
-		DNSNames: []string{config.Config.Name},
-	}
-	csr, err := x509.CreateCertificateRequest(rand.Reader, &csrTemplate, priv)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to generate CSR")
-	}
-	csrPem := pem.EncodeToMemory(&pem.Block{
-		Type:  "CERTIFICATE REQUEST",
-		Bytes: csr,
-	})
-	// Save CSR
-	if err := os.WriteFile(config.Config.TLSPath+"/auto.csr", csrPem, 0600); err != nil {
-		log.Fatal().Err(err).Msg("Failed to save TLS CSR")
-	}
-	// Marshal CSR request
-	reqJson, err := json.Marshal(map[string]string{
-		"csr": string(csrPem),
-	})
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to marshal CSR signing request")
-	}
-	// Send CSR request
-	req, err := http.NewRequest("POST", config.Config.Eve.URL+"/auto", bytes.NewBuffer(reqJson))
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to create CSR signing request")
-	}
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to send CSR signing request")
-	}
-	defer resp.Body.Close()
-	// Check if response is OK
-	if resp.StatusCode == http.StatusOK {
-		return
-	} else {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal().Err(err).Msg("Failed to read CSR signing response")
-		}
-		body := string(bodyBytes)
-		log.Fatal().
-			Int("status", resp.StatusCode).
-			Str("body", body).
-			Msg("Eve returned an error")
-	}
-}
-
-func configureLogger() {
-	flag.Parse()
-
-	if *logFormat == "pretty" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	}
-
-	switch *logLevel {
-	case "debug":
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	case "info":
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	case "warn":
-		zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	case "error":
-		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-	case "fatal":
-		zerolog.SetGlobalLevel(zerolog.FatalLevel)
-	case "panic":
-		zerolog.SetGlobalLevel(zerolog.PanicLevel)
-	default:
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	}
-
-	// Init logger
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-
-	if !*noSplash {
-		log.Info().Msg("+-----------------------------------+")
-		log.Info().Msg("|  Auto - Hypervisor agent for eve  |")
-		log.Info().Msg("|               v" + version + "              |")
-		log.Info().Msg("+-----------------------------------+")
-	} else {
-		log.Info().Msg("Auto - hypervisor agent for eve v" + version)
-	}
 }

@@ -1,11 +1,15 @@
 .PHONY: clean
 
-all: auto
+all: auto auto-tools
 
 # Build executable for Eve program
 auto:
 	go mod download
-	go build --ldflags "-s -w" -o bin/auto ./cmd/auto/main.go
+	go build --ldflags "-s -w" -o bin/auto ./cmd/auto/
+
+auto-tools:
+	go mod download
+	go build --ldflags "-s -w" -o bin/auto-tools ./cmd/auto-tools/
 
 test:
 	go clean -testcache

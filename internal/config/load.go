@@ -29,8 +29,9 @@ var (
 	parser = toml.Parser()
 
 	Config struct {
-		Name    string `koanf:"name"`
-		TLSPath string `koanf:"tls_path"`
+		Hostname string `koanf:"hostname"`
+		Site     string `koanf:"site"`
+		TLSPath  string `koanf:"tls_path"`
 
 		API struct {
 			Host string `koanf:"host"`
@@ -40,6 +41,19 @@ var (
 		Eve struct {
 			URL string `koanf:"url"`
 		} `koanf:"eve"`
+
+		Storage map[string]struct {
+			Enabled bool   `koanf:"enabled"`
+			Type    string `koanf:"type"`
+			Path    string `koanf:"path"`
+			Iso     bool   `koanf:"iso"`
+			Disk    bool   `koanf:"disk"`
+		} `koanf:"storage"`
+
+		Network map[string]struct {
+			Enabled bool   `koanf:"enabled"`
+			Type    string `koanf:"type"`
+		}
 	}
 )
 

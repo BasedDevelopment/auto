@@ -1,5 +1,5 @@
 /*
- * auto - hypervisor agent for eve
+ * eve - management toolkit for libvirt servers
  * Copyright (C) 2022-2023  BNS Services LLC
 
  * This program is free software: you can redistribute it and/or modify
@@ -16,29 +16,4 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package server
-
-import (
-	"time"
-
-	"github.com/BasedDevelopment/eve/pkg/middleware"
-	"github.com/go-chi/chi/v5"
-	cm "github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httprate"
-)
-
-func Service() *chi.Mux {
-	r := chi.NewMux()
-
-	// Middlewares
-	r.Use(cm.RequestID)
-	r.Use(middleware.Logger)
-	r.Use(httprate.LimitByIP(100, 1*time.Minute))
-	r.Use(cm.AllowContentType("application/json"))
-	r.Use(cm.CleanPath)
-	r.Use(cm.NoCache)
-	r.Use(cm.Heartbeat("/"))
-	r.Use(middleware.Recoverer)
-
-	return r
-}
+package libvirt_test

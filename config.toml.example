@@ -1,6 +1,7 @@
 # Move this file to /etc/auto/config.toml
 
-name = "hv0.bns.sh"
+hostname = "dev0.nyc1.bns.sh"
+site = "nyc1.bns.sh"
 tls_path = "/etc/auto/tls"
 
 [api]
@@ -8,4 +9,17 @@ host = "0.0.0.0"
 port = 3000
 
 [eve]
-url = "http://localhost:3000"
+fingerprint = ""
+
+[storage]
+[storage.main]
+enabled = true
+type = "fs"
+path = "/var/lib/auto"
+iso = true
+disk = true
+
+[network]
+[network.br0]
+enabled = true
+type = "bridge"
