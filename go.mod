@@ -3,10 +3,10 @@ module github.com/BasedDevelopment/auto
 go 1.18
 
 require (
-	github.com/BasedDevelopment/eve v0.0.0-20230108215249-9d285da5aff4
+	github.com/BasedDevelopment/eve v0.0.0-20230112232737-1fdfe96f4031
 	github.com/digitalocean/go-libvirt v0.0.0-20221205150000-2939327a8519
 	github.com/go-chi/chi/v5 v5.0.8
-	github.com/go-chi/httprate v0.7.0
+	github.com/go-chi/httprate v0.7.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.3.0
 	github.com/knadh/koanf v1.4.5

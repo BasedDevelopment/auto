@@ -23,6 +23,8 @@ import (
 	"os"
 
 	"github.com/BasedDevelopment/auto/internal/config"
+	"github.com/BasedDevelopment/eve/pkg/pki"
+	"github.com/BasedDevelopment/eve/pkg/util"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -33,13 +35,14 @@ const (
 
 var (
 	configPath = flag.String("config-path", "/etc/auto/config.toml", "Path to TLS key and certificate")
-	genKey     = flag.Bool("gen-key", false, "Generate TLS key")
+	makeKey    = flag.Bool("make-key", false, "Make private key")
 	makeCSR    = flag.Bool("make-csr", false, "Make CSR")
+	checkSum   = flag.String("checksum", "", "Check the checksum of a pem encoded file")
 
-	keyFile string
-	csrFile string
-	crtFile string
-	caFile  string
+	keyPath string
+	csrPath string
+	crtPath string
+	caPath  string
 )
 
 func init() {
@@ -52,78 +55,67 @@ func init() {
 		log.Fatal().Err(err).Msg("Failed to load configuration")
 	}
 
-	keyFile = config.Config.TLSPath + "/" + config.Config.Hostname + ".key"
-	csrFile = config.Config.TLSPath + "/" + config.Config.Hostname + ".csr"
-	crtFile = config.Config.TLSPath + "/" + config.Config.Hostname + ".crt"
-	caFile = config.Config.TLSPath + "/ca.crt"
+	tlsPath := config.Config.TLSPath
+
+	// Ensure TLS path has a slash at the end
+	if tlsPath[len(tlsPath)-1:] != "/" {
+		tlsPath += "/"
+	}
+
+	keyPath = tlsPath + config.Config.Hostname + ".key"
+	csrPath = tlsPath + config.Config.Hostname + ".csr"
+	crtPath = tlsPath + config.Config.Hostname + ".crt"
+	caPath = tlsPath + "ca.crt"
+
+	// Ensure TLS path exists
+	if _, err := os.Stat(tlsPath); os.IsNotExist(err) {
+		log.Info().
+			Str("path", tlsPath).
+			Msg("TLS path does not exist, creating")
+		if err := os.MkdirAll(tlsPath, 0700); err != nil {
+			log.Fatal().
+				Err(err).
+				Str("path", tlsPath).
+				Msg("Failed to create TLS path")
+		}
+	}
 }
 
 func main() {
-	if *genKey {
-		createKey()
+	if *makeKey {
+		log.Info().Msg("Creating key")
+		b := pki.GenKey()
+		util.WriteFile(keyPath, b)
+		log.Info().
+			Str("path", keyPath).
+			Msg("Key written")
 		return
 	}
 
 	if *makeCSR {
-		createCSR()
+		log.Info().Msg("Creating CSR")
+		privBytes := util.ReadFile(keyPath)
+		priv := pki.ReadKey(privBytes)
+		csrBytes := pki.GenCSR(priv, config.Config.Hostname)
+		util.WriteFile(csrPath, csrBytes)
+		sum := pki.PemSum(csrBytes)
+		log.Info().
+			Str("path", csrPath).
+			Str("SHA1", sum).
+			Msg("CSR written")
 		return
 	}
 
-	log.Info().Msg("No action specified, checking and verifying TLS")
-
-	// Keyfile
-	_, err := os.Stat(keyFile)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch TLS key")
-		} else {
-			log.Info().Msg("TLS key not found, generating")
-			createKey()
-		}
-	} else {
-		log.Info().Msg("TLS key found")
+	if *checkSum != "" {
+		b := util.ReadFile(*checkSum)
+		result := pki.PemSum(b)
+		log.Info().
+			Str("path", *checkSum).
+			Str("SHA1", result).
+			Msg("Checksum")
+		return
 	}
 
-	// Certificate Signing Request
-	_, err = os.Stat(csrFile)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch TLS CSR")
-		} else {
-			log.Info().Msg("TLS CSR not found, generating")
-			createCSR()
-		}
-	} else {
-		log.Info().Msg("TLS CSR found")
-	}
-	csrSum()
-
-	// Certificate
-	_, err = os.Stat(crtFile)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch TLS certificate")
-		} else {
-			log.Fatal().Msg("TLS certificate not found, please sign the CSR via eve-tools")
-		}
-	} else {
-		log.Info().Msg("TLS certificate found")
-	}
-	certSum()
-
-	// CA Certificate
-	_, err = os.Stat(caFile)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			log.Fatal().Err(err).Msg("Failed to fetch CA certificate")
-		} else {
-			log.Fatal().Msg("CA certificate not found, please fetch the CA certificate from eve")
-		}
-	} else {
-		log.Info().Msg("CA certificate found")
-		validateCert()
-	}
-	caSum()
-
-	log.Info().Msg("Nothing more to do, exiting")
+	log.Info().Msg("No action specified, verifying PKI")
+	checkPKI()
 }

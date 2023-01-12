@@ -1,7 +1,9 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/BasedDevelopment/eve v0.0.0-20230108215249-9d285da5aff4 h1:q63waKHJhBFUNgXqK47ZEro88irTNGe8bqaRMu47X68=
-github.com/BasedDevelopment/eve v0.0.0-20230108215249-9d285da5aff4/go.mod h1:bKSb1DaBGqsp+N6FFgyRPI0ie7F6C27JpMpSnxZzsSQ=
+github.com/BasedDevelopment/eve v0.0.0-20230112224427-3974b79c56e5 h1:FlPquj1JsAKyDqTCO+CAcNKM6J21NhC3c2hupjgGSJ0=
+github.com/BasedDevelopment/eve v0.0.0-20230112224427-3974b79c56e5/go.mod h1:bKSb1DaBGqsp+N6FFgyRPI0ie7F6C27JpMpSnxZzsSQ=
+github.com/BasedDevelopment/eve v0.0.0-20230112232737-1fdfe96f4031 h1:DM7z3s8UudM8bIhOFcrEeoDXpvYCpOOeL26T1lWhXTI=
+github.com/BasedDevelopment/eve v0.0.0-20230112232737-1fdfe96f4031/go.mod h1:bKSb1DaBGqsp+N6FFgyRPI0ie7F6C27JpMpSnxZzsSQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
@@ -60,8 +62,8 @@ github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbS
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-chi/chi/v5 v5.0.8 h1:lD+NLqFcAi1ovnVZpsnObHGW4xb4J8lNmoYVfECH1Y0=
 github.com/go-chi/chi/v5 v5.0.8/go.mod h1:DslCQbL2OYiznFReuXYUmQ2hGd1aDpCnlMNITLSKoi8=
-github.com/go-chi/httprate v0.7.0 h1:8W0dF7Xa2Duz2p8ncGaehIphrxQGNlOtoGY0+NRRfjQ=
-github.com/go-chi/httprate v0.7.0/go.mod h1:6GOYBSwnpra4CQfAKXu8sQZg+nZ0M1g9QnyFvxrAB8A=
+github.com/go-chi/httprate v0.7.1 h1:d5kXARdms2PREQfU4pHvq44S6hJ1hPu4OXLeBKmCKWs=
+github.com/go-chi/httprate v0.7.1/go.mod h1:6GOYBSwnpra4CQfAKXu8sQZg+nZ0M1g9QnyFvxrAB8A=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-kit/log v0.1.0/go.mod h1:zbhenjAZHb184qTLMA9ZjW7ThYL0H2mk7Q6pNt4vbaY=
