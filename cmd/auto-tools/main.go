@@ -49,7 +49,7 @@ func init() {
 	flag.Parse()
 
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Info().Msg("auto-tools, tools to manage certificate on an auto instance" + version)
+	log.Info().Msg("auto-tools, tools to manage certificate on an auto instance " + version)
 
 	if err := config.Load(*configPath); err != nil {
 		log.Fatal().Err(err).Msg("Failed to load configuration")
