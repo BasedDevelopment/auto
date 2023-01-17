@@ -19,54 +19,13 @@
 package controllers
 
 import (
-	"net"
-	"sync"
-	"time"
-
 	"github.com/BasedDevelopment/auto/internal/libvirt"
-	"github.com/BasedDevelopment/eve/pkg/status"
+	"github.com/BasedDevelopment/auto/pkg/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
 
-type VM struct {
-	mutex       sync.Mutex           `db:"-" json:"-"`
-	ID          uuid.UUID            `json:"id"`
-	HV          uuid.UUID            `db:"hv_id" json:"hv"`
-	Hostname    string               `json:"hostname"`
-	CPU         int                  `json:"cpu"`
-	Memory      int64                `json:"memory"`
-	Nics        map[string]VMNic     `db:"-" json:"nics"`
-	Storages    map[string]VMStorage `db:"-" json:"storages"`
-	Created     time.Time            `json:"created"`
-	Updated     time.Time            `json:"updated"`
-	Remarks     string               `json:"remarks"`
-	Domain      libvirt.Dom          `db:"-" json:"-"`
-	State       status.Status        `db:"-" json:"state"`
-	StateStr    string               `db:"-" json:"state_str"`
-	StateReason string               `db:"-" json:"state_reason"`
-}
-
-type VMNic struct {
-	mutex   sync.Mutex `db:"-" json:"-"`
-	ID      uuid.UUID
-	name    string
-	MAC     string
-	IP      []net.IP `db:"-"`
-	Created time.Time
-	Updated time.Time
-	Remarks string
-	State   string `db:"-"`
-}
-
-type VMStorage struct {
-	mutex   sync.Mutex `db:"-" json:"-"`
-	ID      uuid.UUID
-	Size    int
-	Created time.Time
-	Updated time.Time
-	Remarks string
-}
+type VM models.VM
 
 // Fetch VMs from the DB and Libvirt, marshall them into the HV struct,
 // and check for consistency
@@ -81,12 +40,15 @@ func (hv *HV) InitVMs() error {
 		return err
 	}
 
-	hv.mutex.Lock()
-	defer hv.mutex.Unlock()
+	hv.Mutex.Lock()
+	defer hv.Mutex.Unlock()
 
 	// Marshall the HV.VMs struct in
 	for id, dom := range libvirtVMs {
-		hv.VMs[id] = &VM{Domain: dom}
+		hv.VMs[id] = &models.VM{
+			Domain: dom,
+			ID:     id,
+		}
 	}
 
 	go fetchVMState(hv)
@@ -119,13 +81,13 @@ func (hv *HV) getVMsFromLibvirt() (doms map[uuid.UUID]libvirt.Dom, err error) {
 	return
 }
 
-func (hv *HV) GetVMState(vm *VM) (err error) {
+func (hv *HV) GetVMState(vm *models.VM) (err error) {
 	if err := hv.ensureConn(); err != nil {
 		return err
 	}
 
-	vm.mutex.Lock()
-	defer vm.mutex.Unlock()
+	vm.Mutex.Lock()
+	defer vm.Mutex.Unlock()
 
 	stateInt, stateStr, reasonStr, err := hv.Libvirt.GetVMState(vm.Domain)
 	if err != nil {

@@ -104,7 +104,7 @@ func (l Libvirt) GetHVStats() (arch string, memoryTotal uint64, memoryFree uint6
 		if i == 0 {
 			continue
 		}
-		archl = append(archl, strconv.Itoa(int(i)))
+		archl = append(archl, string(i))
 	}
 	arch = strings.Join(archl, "")
 
