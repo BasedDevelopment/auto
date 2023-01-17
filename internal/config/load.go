@@ -39,8 +39,13 @@ var (
 			Port int    `koanf:"port"`
 		} `koanf:"api"`
 
+		Libvirt struct {
+			Host string `koanf:"host"`
+			Port int    `koanf:"port"`
+		} `koanf:"libvirt"`
+
 		Eve struct {
-			URL string `koanf:"url"`
+			Serial string `koanf:"serial"`
 		} `koanf:"eve"`
 
 		Storage map[string]struct {

@@ -39,9 +39,20 @@ func validate() error {
 		return fmt.Errorf("Configuration: API host is not an IP address: %s", err)
 	}
 
-	port := Config.API.Port
-	if (port <= 1) || (port >= 65535) {
-		return fmt.Errorf("Configuration: API port is not a valid port number: %d", port)
+	if (Config.API.Port <= 1) || (Config.API.Port >= 65535) {
+		return fmt.Errorf("Configuration: API port is not a valid port number: %d", Config.API.Port)
+	}
+
+	if err := validation.Validate(Config.Libvirt.Host, validation.Required, is.Host); err != nil {
+		return fmt.Errorf("Configuration: Libvirt host is not a hostname: %s", err)
+	}
+
+	if (Config.Libvirt.Port <= 1) || (Config.Libvirt.Port >= 65535) {
+		return fmt.Errorf("Configuration: API port is not a valid port number: %d", Config.Libvirt.Port)
+	}
+
+	if err := validation.Validate(Config.Eve.Serial, validation.Required, is.Digit); err != nil {
+		return fmt.Errorf("Configuration: EVE serial not valid %s", err)
 	}
 
 	return nil

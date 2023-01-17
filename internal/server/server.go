@@ -19,8 +19,10 @@
 package server
 
 import (
+	"net/http"
 	"time"
 
+	"github.com/BasedDevelopment/auto/internal/server/routes"
 	"github.com/BasedDevelopment/eve/pkg/middleware"
 	"github.com/go-chi/chi/v5"
 	cm "github.com/go-chi/chi/v5/middleware"
@@ -39,6 +41,23 @@ func Service() *chi.Mux {
 	r.Use(cm.NoCache)
 	r.Use(cm.Heartbeat("/"))
 	r.Use(middleware.Recoverer)
+
+	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong"))
+	})
+
+	r.Route("/libvirt", func(r chi.Router) {
+		r.Get("/", routes.GetHV)
+		r.Route("/domain:", func(r chi.Router) {
+			//r.Get("/", routes.GetDomains)
+			//r.Post("/", routes.CreateDomain)
+			r.Route("/{domain}", func(r chi.Router) {
+				//r.Get("/", routes.GetDomain)
+				//r.Put("/", routes.UpdateDomain)
+				//r.Delete("/", routes.DeleteDomain)
+			})
+		})
+	})
 
 	return r
 }

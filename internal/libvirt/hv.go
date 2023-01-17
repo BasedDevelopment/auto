@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BasedDevelopment/eve/internal/util"
+	"github.com/BasedDevelopment/auto/internal/util"
 	"github.com/digitalocean/go-libvirt"
 	"github.com/digitalocean/go-libvirt/socket/dialers"
 )

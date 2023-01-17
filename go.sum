@@ -1,9 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/BasedDevelopment/eve v0.0.0-20230112224427-3974b79c56e5 h1:FlPquj1JsAKyDqTCO+CAcNKM6J21NhC3c2hupjgGSJ0=
-github.com/BasedDevelopment/eve v0.0.0-20230112224427-3974b79c56e5/go.mod h1:bKSb1DaBGqsp+N6FFgyRPI0ie7F6C27JpMpSnxZzsSQ=
-github.com/BasedDevelopment/eve v0.0.0-20230112232737-1fdfe96f4031 h1:DM7z3s8UudM8bIhOFcrEeoDXpvYCpOOeL26T1lWhXTI=
-github.com/BasedDevelopment/eve v0.0.0-20230112232737-1fdfe96f4031/go.mod h1:bKSb1DaBGqsp+N6FFgyRPI0ie7F6C27JpMpSnxZzsSQ=
+github.com/BasedDevelopment/eve v0.0.0-20230117025535-a07be4278d1d h1:/DJN+QvbP/FrtxE/T6uMhBXT7U8aV7y9OwNfidjm78o=
+github.com/BasedDevelopment/eve v0.0.0-20230117025535-a07be4278d1d/go.mod h1:u5uN5+u5CscGrR3ZObRR/lwF0CHZANv4THxHWLOwEdM=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

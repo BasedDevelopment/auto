@@ -20,7 +20,12 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"flag"
+	"fmt"
+	"io/ioutil"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -29,6 +34,7 @@ import (
 	"time"
 
 	"github.com/BasedDevelopment/auto/internal/config"
+	"github.com/BasedDevelopment/auto/internal/controllers"
 	"github.com/BasedDevelopment/auto/internal/server"
 	"github.com/rs/zerolog/log"
 )
@@ -43,6 +49,11 @@ var (
 	logLevel   = flag.String("log-level", "debug", "Log level (trace, debug, info, warn, error, fatal, panic)")
 	logFormat  = flag.String("log-format", "json", "Log format (json, pretty)")
 	noSplash   = flag.Bool("nosplash", false, "Disable splash screen")
+
+	tlsPath string
+	crtPath string
+	keyPath string
+	caPath  string
 )
 
 func init() {
@@ -54,28 +65,63 @@ func init() {
 	if err := config.Load(*configPath); err != nil {
 		log.Fatal().Err(err).Msg("Failed to load configuration")
 	}
+
+	tlsPath := config.Config.TLSPath
+
+	if tlsPath[len(tlsPath)-1:] != "/" {
+		tlsPath += "/"
+	}
+
+	crtPath = tlsPath + config.Config.Hostname + ".crt"
+	keyPath = tlsPath + config.Config.Hostname + ".key"
+	caPath = tlsPath + "ca.crt"
 }
 
 func main() {
-	if _, err := os.Stat(config.Config.TLSPath + "/auto.key"); err != nil {
-		log.Fatal().Err(err).Msg("Failed to load TLS key")
-	}
-	if _, err := os.Stat(config.Config.TLSPath + "/auto.pem"); err != nil {
-		log.Fatal().Err(err).Msg("Failed to load TLS certificate")
-	}
-
 	log.Info().
 		Str("host", config.Config.API.Host).
 		Int("port", config.Config.API.Port).
 		Msg("HTTPS server listening")
 
+	// TLS config
+	// Add the CA to the pool
+	caPool := x509.NewCertPool()
+	caCertBytes, err := ioutil.ReadFile(caPath)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to load CA certificate")
+	}
+	caPool.AppendCertsFromPEM(caCertBytes)
+
+	tlsConfig := &tls.Config{
+		MinVersion: tls.VersionTLS13,
+		ClientCAs:  caPool,
+		ClientAuth: tls.RequireAndVerifyClientCert,
+		VerifyPeerCertificate: func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
+			// Verify the serial number of the certificate
+			if verifiedChains[0][0].SerialNumber.String() != config.Config.Eve.Serial {
+				return fmt.Errorf("serial number mismatch")
+			}
+			return nil
+		},
+	}
+
 	// Create HTTP server
 	srv := &http.Server{
-		Addr:    config.Config.API.Host + ":" + strconv.Itoa(config.Config.API.Port),
-		Handler: server.Service(),
+		Addr:      config.Config.API.Host + ":" + strconv.Itoa(config.Config.API.Port),
+		Handler:   server.Service(),
+		TLSConfig: tlsConfig,
+		//TODO:	ErrorLog:
 	}
 
 	srvCtx, srvStopCtx := context.WithCancel(context.Background())
+
+	// Initialize the hypervisor
+	hv := controllers.Hypervisor
+	hv.IP = net.ParseIP(config.Config.Libvirt.Host)
+	hv.Port = config.Config.Libvirt.Port
+	if err := hv.Init(); err != nil {
+		log.Error().Err(err).Msg("Failed to initialize hypervisor")
+	}
 
 	// Watch for OS signals
 	sig := make(chan os.Signal, 1)
@@ -112,7 +158,7 @@ func main() {
 	}()
 
 	// Start the server
-	err := srv.ListenAndServeTLS(config.Config.TLSPath+"/auto.pem", config.Config.TLSPath+"/auto.key")
+	err = srv.ListenAndServeTLS(crtPath, keyPath)
 
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal().
