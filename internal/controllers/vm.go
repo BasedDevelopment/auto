@@ -22,7 +22,6 @@ import (
 	"github.com/BasedDevelopment/auto/internal/libvirt"
 	"github.com/BasedDevelopment/auto/pkg/models"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
 type VM models.VM
@@ -51,20 +50,7 @@ func (hv *HV) InitVMs() error {
 		}
 	}
 
-	go fetchVMState(hv)
-
 	return nil
-}
-
-// Fetch VM state and state reason
-func fetchVMState(hv *HV) {
-	for uuid := range hv.VMs {
-		if err := hv.GetVMState(hv.VMs[uuid]); err != nil {
-			log.Error().Err(err).Msg("failed to get VM states")
-			return
-		}
-	}
-	log.Info().Msg("VM states fetched")
 }
 
 // Get the list of VMs from libvirt
@@ -81,21 +67,19 @@ func (hv *HV) getVMsFromLibvirt() (doms map[uuid.UUID]libvirt.Dom, err error) {
 	return
 }
 
-func (hv *HV) GetVMState(vm *models.VM) (err error) {
+func (hv *HV) GetVMState(vm *models.VM) (models.VMState, error) {
 	if err := hv.ensureConn(); err != nil {
-		return err
+		return models.VMState{}, err
 	}
-
-	vm.Mutex.Lock()
-	defer vm.Mutex.Unlock()
 
 	stateInt, stateStr, reasonStr, err := hv.Libvirt.GetVMState(vm.Domain)
 	if err != nil {
-		return err
+		return models.VMState{}, err
 	}
 
-	vm.State = stateInt
-	vm.StateStr = stateStr
-	vm.StateReason = reasonStr
-	return nil
+	return models.VMState{
+		State:       stateInt,
+		StateStr:    stateStr,
+		StateReason: reasonStr,
+	}, nil
 }
