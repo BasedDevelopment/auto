@@ -62,11 +62,13 @@ func checkPKI() {
 
 	crtSum := pki.PemSum(crtBytes)
 	caSum := pki.PemSum(caBytes)
+	serial := crt.SerialNumber.String()
 
 	log.Info().
 		Str("cert path", crtPath).
 		Str("ca path", caPath).
 		Str("crt SHA1", crtSum).
 		Str("ca SHA1", caSum).
+		Str("serial", serial).
 		Msg("certificate verification succeeded")
 }

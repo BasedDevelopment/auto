@@ -153,6 +153,7 @@ func main() {
 
 		// Libvirt connections
 		log.Info().Msg("Libvirt connections shutdown success")
+		controllers.Hypervisor.Libvirt.Close()
 
 		srvStopCtx()
 	}()
