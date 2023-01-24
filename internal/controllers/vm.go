@@ -19,22 +19,21 @@
 package controllers
 
 import (
-	"github.com/BasedDevelopment/auto/internal/libvirt"
+	"strconv"
+
 	"github.com/BasedDevelopment/auto/pkg/models"
-	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type VM models.VM
 
-// Fetch VMs from the DB and Libvirt, marshall them into the HV struct,
-// and check for consistency
 func (hv *HV) InitVMs() error {
 	if err := hv.ensureConn(); err != nil {
 		return err
 	}
 
 	// Get VMs from libvirt
-	libvirtVMs, err := hv.getVMsFromLibvirt()
+	doms, err := hv.Libvirt.GetVMs()
 	if err != nil {
 		return err
 	}
@@ -43,28 +42,51 @@ func (hv *HV) InitVMs() error {
 	defer hv.Mutex.Unlock()
 
 	// Marshall the HV.VMs struct in
-	for id, dom := range libvirtVMs {
+	for id, dom := range doms {
 		hv.VMs[id] = &models.VM{
 			Domain: dom,
 			ID:     id,
 		}
+		go hv.fetchVMSpecs(hv.VMs[id])
 	}
 
 	return nil
 }
 
-// Get the list of VMs from libvirt
-// Will be used to check consistency
-func (hv *HV) getVMsFromLibvirt() (doms map[uuid.UUID]libvirt.Dom, err error) {
+func (hv *HV) fetchVMSpecs(vm *models.VM) {
 	if err := hv.ensureConn(); err != nil {
-		return nil, err
+		log.Error().Err(err).Msg("Failed to ensure connection")
 	}
 
-	doms, err = hv.Libvirt.GetVMs()
+	specs, err := hv.Libvirt.GetVMSpecs(vm.Domain)
 	if err != nil {
-		return nil, err
+		log.Error().Err(err).Msg("Failed to get VM specs")
 	}
-	return
+
+	vm.Mutex.Lock()
+	defer vm.Mutex.Unlock()
+
+	cpuInt, err := strconv.Atoi(specs.Vcpu.Text)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to convert CPU count to int")
+	}
+	vm.CPU = cpuInt
+
+	mem, err := strconv.ParseInt(specs.Memory.Text, 10, 64)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse memory")
+	}
+
+	switch specs.Memory.Unit {
+	case "KiB":
+		mem = mem * 1024
+	case "MiB":
+		mem = mem * 1024 * 1024
+	case "GiB":
+		mem = mem * 1024 * 1024 * 1024
+	}
+
+	vm.Memory = mem
 }
 
 func (hv *HV) GetVMState(vm *models.VM) (models.VMState, error) {

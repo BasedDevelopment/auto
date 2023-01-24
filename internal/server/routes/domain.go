@@ -4,13 +4,17 @@ import (
 	"net/http"
 
 	"github.com/BasedDevelopment/auto/internal/controllers"
+	"github.com/BasedDevelopment/auto/pkg/models"
 	eUtil "github.com/BasedDevelopment/eve/pkg/util"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
 func GetDomains(w http.ResponseWriter, r *http.Request) {
-	resp := controllers.Hypervisor.VMs
+	var resp []models.VM
+	for _, vm := range controllers.Hypervisor.VMs {
+		resp = append(resp, *vm)
+	}
 	if err := eUtil.WriteResponse(resp, w, http.StatusOK); err != nil {
 		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to marshall/send response")
 	}
