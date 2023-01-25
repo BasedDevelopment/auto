@@ -3,7 +3,7 @@ module github.com/BasedDevelopment/auto
 go 1.18
 
 require (
-	github.com/BasedDevelopment/eve v0.0.0-20230117025535-a07be4278d1d
+	github.com/BasedDevelopment/eve v0.0.0-20230125195555-42d69ec9ae4d
 	github.com/digitalocean/go-libvirt v0.0.0-20221205150000-2939327a8519
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/httprate v0.7.1

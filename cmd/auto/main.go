@@ -36,6 +36,7 @@ import (
 	"github.com/BasedDevelopment/auto/internal/config"
 	"github.com/BasedDevelopment/auto/internal/controllers"
 	"github.com/BasedDevelopment/auto/internal/server"
+	"github.com/BasedDevelopment/eve/pkg/fwdlog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -110,7 +111,7 @@ func main() {
 		Addr:      config.Config.API.Host + ":" + strconv.Itoa(config.Config.API.Port),
 		Handler:   server.Service(),
 		TLSConfig: tlsConfig,
-		//TODO:	ErrorLog:
+		ErrorLog:  fwdlog.Logger(),
 	}
 
 	srvCtx, srvStopCtx := context.WithCancel(context.Background())
