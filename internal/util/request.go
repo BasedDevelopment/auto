@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/BasedDevelopment/eve/pkg/status"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/google/uuid"
 )
 
 type Validatable[T any] interface {
@@ -13,7 +15,8 @@ type Validatable[T any] interface {
 }
 
 type Request interface {
-	SetDomainStateRequest
+	SetDomainStateRequest |
+		DomainCreateRequest
 }
 
 type SetDomainStateRequest struct {
@@ -24,6 +27,15 @@ func (r *SetDomainStateRequest) Validate() error {
 	return validation.ValidateStruct(r,
 		validation.Field(&r.State, validation.Required, validation.In("start", "reboot", "poweroff", "stop", "reset")),
 	)
+}
+
+type DomainCreateRequest struct {
+	ID       uuid.UUID     `json:"id"`
+	Hostname string        `json:"hostname"`
+	CPU      int           `json:"cpu"`
+	Memory   int           `json:"memory"`
+	State    status.Status `json:"state"`
+	Distro   string        `json:"distro"`
 }
 
 func ParseRequest[R Request, T Validatable[R]](r *http.Request, rq T) error {
