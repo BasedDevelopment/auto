@@ -1,11 +1,5 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/BasedDevelopment/eve v0.0.0-20230117025535-a07be4278d1d h1:/DJN+QvbP/FrtxE/T6uMhBXT7U8aV7y9OwNfidjm78o=
-github.com/BasedDevelopment/eve v0.0.0-20230117025535-a07be4278d1d/go.mod h1:u5uN5+u5CscGrR3ZObRR/lwF0CHZANv4THxHWLOwEdM=
-github.com/BasedDevelopment/eve v0.0.0-20230124195228-6c127b489d75 h1:CMYRgzGou4J4xaoBPq1PrRelk7rxALKW2DL5fpwG6Vw=
-github.com/BasedDevelopment/eve v0.0.0-20230124195228-6c127b489d75/go.mod h1:RydJXOu9de2hrzPEV3m7qt5Ywn4I0XepcGSmevTHjKI=
-github.com/BasedDevelopment/eve v0.0.0-20230125191403-a14364bc0231 h1:yNXHNeybiY1PTj9aTcQ12fqGmXW+Ev184BZDfRl0ZeQ=
-github.com/BasedDevelopment/eve v0.0.0-20230125191403-a14364bc0231/go.mod h1:RydJXOu9de2hrzPEV3m7qt5Ywn4I0XepcGSmevTHjKI=
 github.com/BasedDevelopment/eve v0.0.0-20230125195555-42d69ec9ae4d h1:UMhPeIIOko9c1OnGM/diVhZttyzsb52sVWTP6MONoJo=
 github.com/BasedDevelopment/eve v0.0.0-20230125195555-42d69ec9ae4d/go.mod h1:RydJXOu9de2hrzPEV3m7qt5Ywn4I0XepcGSmevTHjKI=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -245,8 +239,8 @@ github.com/prometheus/procfs v0.6.0/go.mod h1:cz+aTbrPOrUb4q7XlbU9ygM+/jj0fzG6c1
 github.com/rhnvrm/simples3 v0.6.1/go.mod h1:Y+3vYm2V7Y4VijFoJHHTrja6OgPrJ2cBti8dPGkC3sA=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
 github.com/rs/xid v1.4.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
-github.com/rs/zerolog v1.28.0 h1:MirSo27VyNi7RJYP3078AA1+Cyzd2GB66qy3aUHvsWY=
-github.com/rs/zerolog v1.28.0/go.mod h1:NILgTygv/Uej1ra5XxGf82ZFSLk58MFGAUS2o6usyD0=
+github.com/rs/zerolog v1.29.0 h1:Zes4hju04hjbvkVkOhdl2HpZa+0PmVwigmo8XoORE5w=
+github.com/rs/zerolog v1.29.0/go.mod h1:NILgTygv/Uej1ra5XxGf82ZFSLk58MFGAUS2o6usyD0=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/ryanuber/columnize v2.1.0+incompatible/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/ryanuber/go-glob v1.0.0/go.mod h1:807d1WSdnB0XRJzKNil9Om6lcp/3a0v4qIHxIXzX/Yc=
