@@ -38,6 +38,17 @@ type DomainCreateRequest struct {
 	Distro   string        `json:"distro"`
 }
 
+func (r *DomainCreateRequest) Validate() error {
+	return validation.ValidateStruct(r,
+		validation.Field(&r.ID, validation.Required),
+		validation.Field(&r.Hostname, validation.Required),
+		validation.Field(&r.CPU, validation.Required),
+		validation.Field(&r.Memory, validation.Required),
+		validation.Field(&r.State, validation.Required),
+		validation.Field(&r.Distro, validation.Required),
+	)
+}
+
 func ParseRequest[R Request, T Validatable[R]](r *http.Request, rq T) error {
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(rq); err != nil {

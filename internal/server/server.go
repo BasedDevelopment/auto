@@ -50,7 +50,7 @@ func Service() *chi.Mux {
 		r.Get("/", routes.GetHV)
 		r.Route("/domains", func(r chi.Router) {
 			r.Get("/", routes.GetDomains)
-			//r.Post("/", routes.CreateDomain)
+			r.Post("/", routes.CreateDomain)
 			r.Route("/{domain}", func(r chi.Router) {
 				r.Get("/", routes.GetDomain)
 				r.Route("/state", func(r chi.Router) {
