@@ -59,6 +59,7 @@ var (
 
 func init() {
 	configureLogger()
+	checkPaths()
 
 	// Load configuration
 	log.Info().Msg("Loading configuration")
@@ -122,6 +123,10 @@ func main() {
 	hv.Port = config.Config.Libvirt.Port
 	if err := hv.Init(); err != nil {
 		log.Error().Err(err).Msg("Failed to initialize hypervisor")
+	}
+
+	if err := controllers.CheckStorage(); err != nil {
+		log.Error().Err(err).Msg("Failed to initialize storage")
 	}
 
 	// Watch for OS signals

@@ -48,11 +48,16 @@ func Service() *chi.Mux {
 
 	r.Route("/libvirt", func(r chi.Router) {
 		r.Get("/", routes.GetHV)
-		r.Route("/domains", func(r chi.Router) {
+		r.Route("/storage", func(r chi.Router) {
+			r.Get("/", routes.GetStorages)
+			r.Get("/image", routes.GetImages)
+			r.Get("/disk", routes.GetDisks)
+		})
+		r.Route("/domain", func(r chi.Router) {
 			r.Get("/", routes.GetDomains)
-			r.Post("/", routes.CreateDomain)
 			r.Route("/{domain}", func(r chi.Router) {
 				r.Get("/", routes.GetDomain)
+				r.Put("/", routes.CreateDomain)
 				r.Route("/state", func(r chi.Router) {
 					r.Get("/", routes.GetDomainState)
 					r.Patch("/", routes.SetDomainState)
