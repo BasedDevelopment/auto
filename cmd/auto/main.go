@@ -28,6 +28,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strconv"
 	"syscall"
@@ -57,9 +58,21 @@ var (
 	caPath  string
 )
 
+var binaries = []string{
+	"virt-install",
+	"qemu-img",
+	"genisoimage",
+}
+
 func init() {
 	configureLogger()
-	checkPaths()
+
+	for _, b := range binaries {
+		_, err := exec.LookPath(b)
+		if err != nil {
+			log.Warn().Err(err).Msgf("could not find %s in PATH", b)
+		}
+	}
 
 	// Load configuration
 	log.Info().Msg("Loading configuration")
