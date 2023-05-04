@@ -89,6 +89,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 			Strs("args", args).
 			Str("output", string(out)).
 			Msg("create domain")
+		return err
 	}
 	log.Debug().
 		Str("output", string(out)).
@@ -111,6 +112,7 @@ func (hv *HV) CreateDisk(path string, size int) error {
 			Strs("args", args).
 			Str("output", string(out)).
 			Msg("create disk")
+		return err
 	}
 	log.Debug().
 		Str("output", string(out)).
@@ -133,6 +135,7 @@ func (hv *HV) CreateCloudDisk(path string, size int, image string) error {
 			Strs("args", args).
 			Str("output", string(out)).
 			Msg("create cloud disk")
+		return err
 	}
 	log.Debug().
 		Str("output", string(out)).
@@ -183,6 +186,7 @@ func (hv *HV) CreateCloudInitIso(path string, userData string, metaData string) 
 			Strs("args", args).
 			Str("output", string(out)).
 			Msg("create cloud init iso")
+		return err
 	}
 	log.Debug().
 		Str("output", string(out)).
