@@ -90,7 +90,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 }
 
 func (hv *HV) CreateDisk(path string, size int) error {
-	args := []string{"qemu-img", "create", "-f", "qcow2", path, strconv.Itoa(size) + "G"}
+	args := []string{"create", "-f", "qcow2", path, strconv.Itoa(size) + "G"}
 	log.Debug().
 		Str("command", "qemu-img").
 		Strs("args", args).
