@@ -76,17 +76,25 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		args = append(args, "--disk", "path="+req.Image+",device=cdrom")
 	}
 
-	cmd := exec.Command(
-		"virt-install",
-		args...,
-	)
-	_ = cmd
-
 	log.Debug().
 		Str("command", "virt-install").
 		Strs("args", args).
 		Msg("create domain")
-	return cmd.Run()
+
+	out, err := exec.Command("virt-install", args...).CombinedOutput()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("command", "virt-install").
+			Strs("args", args).
+			Str("output", string(out)).
+			Msg("create domain")
+	}
+	log.Debug().
+		Str("output", string(out)).
+		Msg("create domain")
+
+	return nil
 }
 
 func (hv *HV) CreateDisk(path string, size int) error {
@@ -95,17 +103,41 @@ func (hv *HV) CreateDisk(path string, size int) error {
 		Str("command", "qemu-img").
 		Strs("args", args).
 		Msg("create disk")
-	return exec.Command("qemu-img", args...).Run()
+	out, err := exec.Command("qemu-img", args...).CombinedOutput()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("command", "qemu-img").
+			Strs("args", args).
+			Str("output", string(out)).
+			Msg("create disk")
+	}
+	log.Debug().
+		Str("output", string(out)).
+		Msg("create disk")
+
+	return nil
 }
 
 func (hv *HV) CreateCloudDisk(path string, size int, image string) error {
-	//qemu-img create -b focal-server-cloudimg-amd64.img -f qcow2 -F qcow2 hal9000.img 10G
 	args := []string{"create", "-b", image, "-f", "qcow2", "-F", "qcow2", path, strconv.Itoa(size) + "G"}
 	log.Debug().
 		Str("command", "qemu-img").
 		Strs("args", args).
 		Msg("create cloud disk")
-	return exec.Command("qemu-img", args...).Run()
+	out, err := exec.Command("qemu-img", args...).CombinedOutput()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("command", "qemu-img").
+			Strs("args", args).
+			Str("output", string(out)).
+			Msg("create cloud disk")
+	}
+	log.Debug().
+		Str("output", string(out)).
+		Msg("create cloud disk")
+	return nil
 }
 
 func (hv *HV) CreateCloudInitIso(path string, userData string, metaData string) error {
@@ -143,5 +175,17 @@ func (hv *HV) CreateCloudInitIso(path string, userData string, metaData string) 
 		Str("command", "genisoimage").
 		Strs("args", args).
 		Msg("create cloud init iso")
-	return exec.Command("genisoimage", args...).Run()
+	out, err := exec.Command("genisoimage", args...).CombinedOutput()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Str("command", "genisoimage").
+			Strs("args", args).
+			Str("output", string(out)).
+			Msg("create cloud init iso")
+	}
+	log.Debug().
+		Str("output", string(out)).
+		Msg("create cloud init iso")
+	return nil
 }
