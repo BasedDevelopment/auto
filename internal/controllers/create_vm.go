@@ -33,7 +33,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		"--vcpus", strconv.Itoa(req.CPU),
 		"--os-variant", req.OSVariant,
 		//TODO: un hardcode this
-		"--boot", "cdrom,fd,hd,network,menu=on",
+		"--boot", "cdrom,hd,menu=on",
 	}
 
 	for _, disk := range req.Disk {
