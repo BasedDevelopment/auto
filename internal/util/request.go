@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/BasedDevelopment/eve/pkg/status"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
 
 type Validatable[T any] interface {
@@ -29,20 +29,20 @@ func (r *SetDomainStateRequest) Validate() error {
 }
 
 type DomainCreateRequest struct {
-	Hostname  string        `json:"hostname"`
-	CPU       int           `json:"cpu"`
-	Memory    int           `json:"memory"`
-	State     status.Status `json:"state"`
-	Image     string        `json:"image"`
-	Cloud     bool          `json:"cloud"`
-	OS        string        `json:"os"`
-	OSVariant string        `json:"os_variant"`
-	userData  string        `json:"userData"`
-	metaData  string        `json:"metaData"`
-	Disk      []struct {
+	Id         string `json:"id"`
+	Hostname   string `json:"hostname"`
+	CPU        int    `json:"cpu"`
+	Memory     int    `json:"memory"`
+	Image      string `json:"image"`
+	Cloud      bool   `json:"cloud"`
+	CloudImage string `json:"cloud_image"`
+	OSVariant  string `json:"os_variant"`
+	UserData   string `json:"user_data"`
+	MetaData   string `json:"meta_data"`
+	Disk       []struct {
 		Id   int    `json:"id"`
 		Size int    `json:"size"`
-		Disk string `json:"disk"`
+		Path string `json:"path"`
 	} `json:"disk"`
 	Iface []struct {
 		Bridge string `json:"bridge"`
@@ -51,11 +51,19 @@ type DomainCreateRequest struct {
 }
 
 func (r *DomainCreateRequest) Validate() error {
+	if r.Cloud {
+		if err := validation.ValidateStruct(r,
+			validation.Field(&r.UserData, validation.Required),
+			validation.Field(&r.MetaData, validation.Required),
+		); err != nil {
+			return err
+		}
+	}
 	return validation.ValidateStruct(r,
-		validation.Field(&r.Hostname, validation.Required),
-		validation.Field(&r.CPU, validation.Required),
-		validation.Field(&r.Memory, validation.Required),
-		validation.Field(&r.State, validation.Required),
+		validation.Field(&r.Hostname, validation.Required, is.Domain),
+		validation.Field(&r.CPU, validation.Required, validation.Min(1)),
+		validation.Field(&r.Memory, validation.Required, validation.Min(1)),
+		// Validation of disk and image path is not here due to import cycle
 	)
 }
 

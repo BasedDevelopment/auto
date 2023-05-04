@@ -49,13 +49,20 @@ var (
 		} `koanf:"eve"`
 
 		Storage map[string]struct {
+			Enabled    bool   `koanf:"enabled"`
+			Type       string `koanf:"type"`
+			Path       string `koanf:"path"`
+			Iso        bool   `koanf:"iso"`
+			Disk       bool   `koanf:"disk"`
+			CloudImage bool   `koanf:"cloud_image"`
+			Remarks    string `koanf:"remarks"`
+		} `koanf:"storage"`
+
+		CloudInit struct {
 			Enabled bool   `koanf:"enabled"`
 			Type    string `koanf:"type"`
 			Path    string `koanf:"path"`
-			Iso     bool   `koanf:"iso"`
-			Disk    bool   `koanf:"disk"`
-			Remarks string `koanf:"remarks"`
-		} `koanf:"storage"`
+		} `koanf:"cloud_init"`
 
 		Network map[string]struct {
 			Enabled bool   `koanf:"enabled"`

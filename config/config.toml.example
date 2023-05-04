@@ -23,7 +23,13 @@ type = "fs"
 path = "/var/lib/auto"
 iso = true
 disk = true
+cloud_image = true
 remarks = ""
+
+[cloud_init]
+enabled = true
+type = "fs"
+path = "/var/lib/auto-cloudinit"
 
 [network]
 [network.br0]
