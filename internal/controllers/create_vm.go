@@ -32,6 +32,8 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		"--memory", strconv.Itoa(req.Memory),
 		"--vcpus", strconv.Itoa(req.CPU),
 		"--os-variant", req.OSVariant,
+		//TODO: un hardcode this
+		"--boot", "cdrom,fd,hd,network,menu=on",
 	}
 
 	for _, disk := range req.Disk {
