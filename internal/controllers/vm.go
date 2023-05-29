@@ -79,11 +79,11 @@ func (hv *HV) fetchVMSpecs(vm *models.VM) {
 
 	switch specs.Memory.Unit {
 	case "KiB":
-		mem = mem * 1024
-	case "MiB":
 		mem = mem * 1024 * 1024
-	case "GiB":
+	case "MiB":
 		mem = mem * 1024 * 1024 * 1024
+	case "GiB":
+		mem = mem * 1024 * 1024 * 1024 * 1024
 	}
 
 	vm.Memory = mem
