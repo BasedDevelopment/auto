@@ -99,7 +99,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		Str("output", string(out)).
 		Msg("create domain")
 
-	return nil
+	return hv.Init()
 }
 
 func (hv *HV) CreateDisk(path string, size int) error {

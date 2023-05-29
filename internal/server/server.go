@@ -53,7 +53,7 @@ func Service() *chi.Mux {
 			r.Get("/image", routes.GetImages)
 			r.Get("/disk", routes.GetDisks)
 		})
-		r.Route("/domain", func(r chi.Router) {
+		r.Route("/domains", func(r chi.Router) {
 			r.Get("/", routes.GetDomains)
 			r.Route("/{domain}", func(r chi.Router) {
 				r.Get("/", routes.GetDomain)
