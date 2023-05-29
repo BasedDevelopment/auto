@@ -21,6 +21,7 @@ package libvirt
 import (
 	"encoding/hex"
 	"encoding/xml"
+	"errors"
 
 	"github.com/BasedDevelopment/eve/pkg/status"
 	"github.com/digitalocean/go-libvirt"
@@ -96,6 +97,27 @@ func (l Libvirt) GetVMState(dom Dom) (stateInt status.Status, stateStr string, r
 	stateInt = status.Status(lState)
 	stateStr, reasonStr = getStateReason(lState, lReason)
 	return
+}
+
+func (l Libvirt) GetVMConsole(dom Dom) (port string, err error) {
+	domXml, err := l.conn.DomainGetXMLDesc(dom.Dom, 0)
+	if err != nil {
+		return
+	}
+
+	domXmlBytes := []byte(domXml)
+	var specs DomSpecs
+	err = xml.Unmarshal([]byte(domXmlBytes), &specs)
+	if err != nil {
+		return
+	}
+
+	for _, g := range specs.Devices.Graphics {
+		if g.Type == "vnc" && g.Websocket != "" {
+			return g.Websocket, nil
+		}
+	}
+	return "", errors.New("no console found")
 }
 
 func (l Libvirt) VMStart(dom Dom) (err error) {

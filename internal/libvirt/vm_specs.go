@@ -293,11 +293,12 @@ type DomSpecs struct {
 				Port string `xml:"port,attr"`
 			} `xml:"address"`
 		} `xml:"input"`
-		Graphics struct {
+		Graphics []struct {
 			Text       string `xml:",chardata"`
 			Type       string `xml:"type,attr"`
 			Port       string `xml:"port,attr"`
 			Autoport   string `xml:"autoport,attr"`
+			Websocket  string `xml:"websocket,attr"`
 			AttrListen string `xml:"listen,attr"`
 			Listen     struct {
 				Text    string `xml:",chardata"`

@@ -58,6 +58,7 @@ func Service() *chi.Mux {
 			r.Route("/{domain}", func(r chi.Router) {
 				r.Get("/", routes.GetDomain)
 				r.Put("/", routes.CreateDomain)
+				r.Get("/console", routes.GetConsole)
 				r.Route("/state", func(r chi.Router) {
 					r.Get("/", routes.GetDomainState)
 					r.Patch("/", routes.SetDomainState)

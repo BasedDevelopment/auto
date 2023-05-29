@@ -105,3 +105,11 @@ func (hv *HV) GetVMState(vm *models.VM) (models.VMState, error) {
 		StateReason: reasonStr,
 	}, nil
 }
+
+func (hv *HV) GetVMConsole(vm *models.VM) (string, error) {
+	if err := hv.ensureConn(); err != nil {
+		return "", err
+	}
+
+	return hv.Libvirt.GetVMConsole(vm.Domain)
+}
