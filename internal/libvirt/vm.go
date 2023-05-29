@@ -36,7 +36,7 @@ type Dom struct {
 // Fetches list of all defined domains
 // Won't be used to populate the HV's VM list, instead to check for inconsistencies
 func (l Libvirt) GetVMs() (vms map[uuid.UUID]Dom, err error) {
-	doms, _, err := l.conn.ConnectListAllDomains(1, libvirt.ConnectListDomainsPersistent)
+	doms, _, err := l.conn.ConnectListAllDomains(1, libvirt.ConnectListDomainsPersistent|libvirt.ConnectListDomainsActive|libvirt.ConnectListDomainsInactive|libvirt.ConnectListDomainsTransient)
 	if err != nil {
 		return
 	}
