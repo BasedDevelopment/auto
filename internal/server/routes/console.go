@@ -30,5 +30,5 @@ func GetConsole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	return wsproxy.WsProxy(w, r, peer)
+	wsproxy.WsProxy(w, r, peer)
 }

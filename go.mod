@@ -3,7 +3,7 @@ module github.com/BasedDevelopment/auto
 go 1.20
 
 require (
-	github.com/BasedDevelopment/eve v0.0.0-20230125195555-42d69ec9ae4d
+	github.com/BasedDevelopment/eve v0.0.0-20230529075339-ede3e890c419
 	github.com/digitalocean/go-libvirt v0.0.0-20221205150000-2939327a8519
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/httprate v0.7.4
@@ -18,10 +18,10 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 )
