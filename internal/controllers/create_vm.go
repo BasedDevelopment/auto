@@ -34,6 +34,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		"--os-variant", req.OSVariant,
 		//TODO: un hardcode this
 		"--boot", "cdrom,hd,menu=on",
+		"--graphics", "vnc,listen=0.0.0.0,websocket=-1",
 		"--noautoconsole",
 	}
 
