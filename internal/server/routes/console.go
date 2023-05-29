@@ -1,12 +1,11 @@
 package routes
 
 import (
-	"fmt"
-	"net"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 
 	eUtil "github.com/BasedDevelopment/eve/pkg/util"
-	"github.com/BasedDevelopment/eve/pkg/wsproxy"
 )
 
 func GetConsole(w http.ResponseWriter, r *http.Request) {
@@ -22,13 +21,10 @@ func GetConsole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wsUrl := fmt.Sprintf("ws://%s:%d", "localhost", port)
+	// Since libvirt's vnc doesn't accept any path, we will rewrite it to empty since proxyer will add it
+	r.URL.Path = ""
+	wsUrl := &url.URL{Scheme: "http", Host: "localhost:" + port}
 
-	peer, err := net.Dial("tcp", wsUrl)
-	if err != nil {
-		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to dial TCP connection to ws")
-		return
-	}
-
-	wsproxy.WsProxy(w, r, peer)
+	proxy := httputil.NewSingleHostReverseProxy(wsUrl)
+	proxy.ServeHTTP(w, r)
 }
