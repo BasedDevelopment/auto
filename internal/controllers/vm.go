@@ -127,5 +127,9 @@ func (hv *HV) UndefineVM(vm *models.VM) error {
 		return err
 	}
 
-	return hv.Libvirt.UndefineVM(vm.Domain)
+	if err := hv.Libvirt.UndefineVM(vm.Domain); err != nil {
+		return err
+	}
+
+	return hv.InitVMs()
 }
