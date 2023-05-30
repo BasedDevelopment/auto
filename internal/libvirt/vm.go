@@ -139,3 +139,11 @@ func (l Libvirt) VMStop(dom Dom) error {
 func (l Libvirt) VMReset(dom Dom) error {
 	return l.conn.DomainReset(dom.Dom, 0)
 }
+
+func (l Libvirt) DestroyVM(dom Dom) error {
+	return l.conn.DomainDestroy(dom.Dom)
+}
+
+func (l Libvirt) UndefineVM(dom Dom) error {
+	return l.conn.DomainUndefine(dom.Dom)
+}

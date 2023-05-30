@@ -50,3 +50,25 @@ func GetDomain(w http.ResponseWriter, r *http.Request) {
 		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to marshall/send response")
 	}
 }
+
+func DeleteDomain(w http.ResponseWriter, r *http.Request) {
+	domain, err := getDomain(r)
+	if err != nil {
+		eUtil.WriteError(w, r, err, http.StatusNotFound, "Invalid domain ID or can't be found")
+		return
+	}
+
+	if err := HV.DestroyVM(domain); err != nil {
+		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to destroy domain")
+		return
+	}
+
+	if err := HV.UndefineVM(domain); err != nil {
+		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to undefine domain")
+		return
+	}
+
+	if err := eUtil.WriteResponse(domain, w, http.StatusOK); err != nil {
+		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to marshall/send response")
+	}
+}

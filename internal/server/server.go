@@ -64,7 +64,7 @@ func Service() *chi.Mux {
 					r.Patch("/", routes.SetDomainState)
 				})
 				//r.Patch("/", routes.UpdateDomain)
-				//r.Delete("/", routes.DeleteDomain)
+				r.Delete("/", routes.DeleteDomain)
 			})
 		})
 	})
