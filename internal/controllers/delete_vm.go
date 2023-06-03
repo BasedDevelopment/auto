@@ -21,6 +21,7 @@ package controllers
 import (
 	"errors"
 	"os"
+	"path/filepath"
 
 	"github.com/BasedDevelopment/auto/pkg/models"
 )
@@ -45,9 +46,23 @@ func (hv *HV) UndefineVM(vm *models.VM) error {
 	return hv.InitVMs()
 }
 
-func (hv *HV) DeleteDisk(path string) error {
+func (hv *HV) DeleteDiskFile(path string) error {
 	if _, err := os.Stat(path); err != nil {
 		return errors.New("file does not exist")
 	}
-	return os.Remove(path)
+
+	if err := os.Remove(path); err != nil {
+		return err
+	}
+
+	// see if the directory is empty, if it is, remove the directory
+	dir := filepath.Dir(path)
+	entry, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	if len(entry) != 0 {
+		return nil
+	}
+	return os.Remove(dir)
 }
