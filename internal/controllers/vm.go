@@ -113,23 +113,3 @@ func (hv *HV) GetVMConsole(vm *models.VM) (string, error) {
 
 	return hv.Libvirt.GetVMConsole(vm.Domain)
 }
-
-func (hv *HV) DestroyVM(vm *models.VM) error {
-	if err := hv.ensureConn(); err != nil {
-		return err
-	}
-
-	return hv.Libvirt.DestroyVM(vm.Domain)
-}
-
-func (hv *HV) UndefineVM(vm *models.VM) error {
-	if err := hv.ensureConn(); err != nil {
-		return err
-	}
-
-	if err := hv.Libvirt.UndefineVM(vm.Domain); err != nil {
-		return err
-	}
-
-	return hv.InitVMs()
-}

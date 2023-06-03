@@ -58,6 +58,13 @@ func DeleteDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for _, disk := range domain.Storages {
+		if err := HV.DeleteDisk(disk.Path); err != nil {
+			eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to delete disk")
+			return
+		}
+	}
+
 	if err := HV.DestroyVM(domain); err != nil {
 		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to destroy domain")
 		return

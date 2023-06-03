@@ -41,6 +41,7 @@ type VMNic struct {
 type VMStorage struct {
 	Mutex   sync.Mutex `json:"-"`
 	ID      uuid.UUID  `json:"id"`
+	Path    string     `json:"path"`
 	Size    int        `json:"size"`
 	Created time.Time  `json:"created"`
 	Updated time.Time  `json:"updated"`

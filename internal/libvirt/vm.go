@@ -65,10 +65,10 @@ func (l Libvirt) GetUndefinedVMs() (vms map[uuid.UUID]Dom, err error) {
 }
 
 // Fetches a domain from a UUID
-func (l Libvirt) GetVMFromUUID(vmId uuid.UUID) (dom Dom, err error) {
-	vmIdHex, _ := hex.DecodeString(vmId.String())
+func (l Libvirt) GetVMFromUUID(vmID uuid.UUID) (dom Dom, err error) {
+	vmIDHex, _ := hex.DecodeString(vmID.String())
 	var libvirtUUID libvirt.UUID
-	copy(libvirtUUID[:], vmIdHex[:])
+	copy(libvirtUUID[:], vmIDHex[:])
 	domain, err := l.conn.DomainLookupByUUID(libvirtUUID)
 	dom = Dom{domain}
 	return

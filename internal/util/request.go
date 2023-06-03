@@ -29,7 +29,7 @@ func (r *SetDomainStateRequest) Validate() error {
 }
 
 type DomainCreateRequest struct {
-	Id         string `json:"id"`
+	ID         string `json:"id"`
 	Hostname   string `json:"hostname"`
 	CPU        int    `json:"cpu"`
 	Memory     int    `json:"memory"`
@@ -40,7 +40,7 @@ type DomainCreateRequest struct {
 	UserData   string `json:"user_data"`
 	MetaData   string `json:"meta_data"`
 	Disk       []struct {
-		Id   int    `json:"id"`
+		ID   int    `json:"id"`
 		Size int    `json:"size"`
 		Path string `json:"path"`
 	} `json:"disk"`

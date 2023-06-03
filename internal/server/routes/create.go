@@ -10,7 +10,7 @@ import (
 )
 
 func CreateDomain(w http.ResponseWriter, r *http.Request) {
-	domId, err := uuid.Parse(chi.URLParam(r, "domain"))
+	domID, err := uuid.Parse(chi.URLParam(r, "domain"))
 	if err != nil {
 		eUtil.WriteError(w, r, err, http.StatusBadRequest, "invalid domain id")
 		return
@@ -22,7 +22,7 @@ func CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := HV.CreateDomain(domId, req); err != nil {
+	if err := HV.CreateDomain(domID, req); err != nil {
 		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to create domain")
 		return
 	}

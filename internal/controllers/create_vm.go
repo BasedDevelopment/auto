@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err error) {
+func (hv *HV) CreateDomain(domID uuid.UUID, req *util.DomainCreateRequest) (err error) {
 	// Validation of disk and image path is here due to import cycle
 	if err := validation.ValidateStruct(req,
 		validation.Field(&req.Image, validation.In(Images)),
@@ -27,7 +27,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 	}
 
 	args := []string{
-		"--uuid", domId.String(),
+		"--uuid", domID.String(),
 		"--name", req.Hostname,
 		"--memory", strconv.Itoa(req.Memory),
 		"--vcpus", strconv.Itoa(req.CPU),
@@ -46,7 +46,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		if !util.Contains(Disks, disk.Path) {
 			return errors.New("disk path is not in auto config")
 		}
-		dir := disk.Path + "/" + domId.String()
+		dir := disk.Path + "/" + domID.String()
 
 		if _, err := os.Stat(dir); os.IsNotExist(err) {
 			if err := os.Mkdir(dir, 0755); err != nil {
@@ -55,8 +55,8 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 		}
 
 		// If cloudinit, disk zero is the image disk
-		diskPath := dir + "/" + strconv.Itoa(disk.Id) + ".qcow2"
-		if disk.Id == 0 && req.Cloud {
+		diskPath := dir + "/" + strconv.Itoa(disk.ID) + ".qcow2"
+		if disk.ID == 0 && req.Cloud {
 			if err := hv.CreateCloudDisk(diskPath, disk.Size, req.CloudImage); err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ func (hv *HV) CreateDomain(domId uuid.UUID, req *util.DomainCreateRequest) (err 
 	}
 
 	if req.Cloud {
-		cloudInitIsoPath := CloudInitPath + "/" + domId.String() + "-cidata.iso"
+		cloudInitIsoPath := CloudInitPath + "/" + domID.String() + "-cidata.iso"
 		if err := hv.CreateCloudInitIso(cloudInitIsoPath, req.UserData, req.MetaData); err != nil {
 			return err
 		}
