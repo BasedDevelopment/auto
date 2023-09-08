@@ -50,8 +50,13 @@ func Service() *chi.Mux {
 		r.Get("/", routes.GetHV)
 		r.Route("/storage", func(r chi.Router) {
 			r.Get("/", routes.GetStorages)
-			r.Get("/image", routes.GetImages)
-			r.Get("/disk", routes.GetDisks)
+			r.Route("/{storage}", func(r chi.Router) {
+				// this is fine, have it read from config, and make sure it is also valid by checking the slices
+				// then have a route return the stuff in each storage
+				r.Get("/images", routes.GetImages)
+				r.Get("/cloud-images", routes.GetCloudImages)
+				r.Get("/disks", routes.GetDisks)
+			})
 		})
 		r.Route("/domains", func(r chi.Router) {
 			r.Get("/", routes.GetDomains)

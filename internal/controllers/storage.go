@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	CloudImages   = []string{}
-	Images        = []string{}
-	Disks         = []string{}
-	CloudInitPath = ""
+	CloudImages   = []map[string]string{}
+	Images        = []map[string]string{}
+	Disks         = []map[string]string{}
+	CloudInitPath = []map[string]string{}
 )
 
 func CheckStorage() error {
@@ -71,4 +71,18 @@ func CheckStorage() error {
 		Msg("Storage check complete")
 
 	return nil
+}
+
+func (hv *HV) ListDir(path string) ([]string, error) {
+	files, err := os.ReadDir(path)
+	if err != nil {
+		return nil, err
+	}
+
+	var names []string
+	for _, file := range files {
+		names = append(names, file.Name())
+	}
+
+	return names, nil
 }

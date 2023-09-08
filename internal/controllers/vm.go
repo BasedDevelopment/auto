@@ -66,12 +66,14 @@ func (hv *HV) fetchVMSpecs(vm *models.VM) {
 	vm.Mutex.Lock()
 	defer vm.Mutex.Unlock()
 
+	// CPU
 	cpuInt, err := strconv.Atoi(specs.Vcpu.Text)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to convert CPU count to int")
 	}
 	vm.CPU = cpuInt
 
+	// Memory
 	mem, err := strconv.ParseInt(specs.Memory.Text, 10, 64)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse memory")
@@ -87,6 +89,15 @@ func (hv *HV) fetchVMSpecs(vm *models.VM) {
 	}
 
 	vm.Memory = mem
+
+	// USBs
+	//TODO
+	// Disks
+	//TODO
+	// Nics
+	//TODO
+	// Graphics
+	//TODO
 }
 
 func (hv *HV) GetVMState(vm *models.VM) (models.VMState, error) {
