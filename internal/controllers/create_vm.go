@@ -22,8 +22,10 @@ func (hv *HV) CreateDomain(domID uuid.UUID, req *util.DomainCreateRequest) (err 
 		return err
 	}
 
-	if req.Cloud && CloudInitPath == "" {
-		return errors.New("no cloud-init path in auto config")
+	if req.Cloud {
+		if len(CloudInitPath) == 0 {
+			return errors.New("no cloud-init path in auto config")
+		}
 	}
 
 	args := []string{
@@ -38,47 +40,53 @@ func (hv *HV) CreateDomain(domID uuid.UUID, req *util.DomainCreateRequest) (err 
 		"--noautoconsole",
 	}
 
-	for _, disk := range req.Disk {
-		// check if disk.Path is empty or in []Disks
-		if disk.Path == "" {
-			return errors.New("disk path is empty")
-		}
-		if !util.Contains(Disks, disk.Path) {
-			return errors.New("disk path is not in auto config")
-		}
-		dir := disk.Path + "/" + domID.String()
+	/*
+		for _, disk := range req.Disk {
+			// check if disk.Path is empty or in []Disks
+			if disk.Path == "" {
+				return errors.New("disk path is empty")
+			}
+			if !util.Contains(Disks, disk.Path) {
+				return errors.New("disk path is not in auto config")
+			}
+			// Currently, disk is a map, but it is only being added as a array in storage.go, which throws an error because the type mismatch, i need to figure out what i wanted to put on there when i was changing the code.
 
-		if _, err := os.Stat(dir); os.IsNotExist(err) {
-			if err := os.Mkdir(dir, 0755); err != nil {
+			//oh i think the map should be name -> path like proxmox
+			//if _, ok := Disks[disk.Path)
+			dir := disk.Path + "/" + domID.String()
+
+			if _, err := os.Stat(dir); os.IsNotExist(err) {
+				if err := os.Mkdir(dir, 0755); err != nil {
+					return err
+				}
+			}
+
+			// If cloudinit, disk zero is the image disk
+			diskPath := dir + "/" + strconv.Itoa(disk.ID) + ".qcow2"
+			if disk.ID == 0 && req.Cloud {
+				if err := hv.CreateCloudDisk(diskPath, disk.Size, req.CloudImage); err != nil {
+					return err
+				}
+			} else {
+				if err := hv.CreateDisk(diskPath, disk.Size); err != nil {
+					return err
+				}
+			}
+			args = append(args, "--disk", "path="+diskPath+",format=qcow2")
+		}
+
+		if req.Cloud {
+			cloudInitIsoPath := CloudInitPath + "/" + domID.String() + "-cidata.iso"
+			if err := hv.CreateCloudInitIso(cloudInitIsoPath, req.UserData, req.MetaData); err != nil {
 				return err
 			}
+			args = append(args, "--disk", "path="+cloudInitIsoPath+",device=cdrom")
 		}
 
-		// If cloudinit, disk zero is the image disk
-		diskPath := dir + "/" + strconv.Itoa(disk.ID) + ".qcow2"
-		if disk.ID == 0 && req.Cloud {
-			if err := hv.CreateCloudDisk(diskPath, disk.Size, req.CloudImage); err != nil {
-				return err
-			}
-		} else {
-			if err := hv.CreateDisk(diskPath, disk.Size); err != nil {
-				return err
-			}
+		if req.Image != "" {
+			args = append(args, "--disk", "path="+req.Image+",device=cdrom")
 		}
-		args = append(args, "--disk", "path="+diskPath+",format=qcow2")
-	}
-
-	if req.Cloud {
-		cloudInitIsoPath := CloudInitPath + "/" + domID.String() + "-cidata.iso"
-		if err := hv.CreateCloudInitIso(cloudInitIsoPath, req.UserData, req.MetaData); err != nil {
-			return err
-		}
-		args = append(args, "--disk", "path="+cloudInitIsoPath+",device=cdrom")
-	}
-
-	if req.Image != "" {
-		args = append(args, "--disk", "path="+req.Image+",device=cdrom")
-	}
+	*/
 
 	log.Debug().
 		Str("command", "virt-install").

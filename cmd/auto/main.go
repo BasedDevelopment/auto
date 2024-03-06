@@ -138,9 +138,9 @@ func main() {
 		log.Error().Err(err).Msg("Failed to initialize hypervisor")
 	}
 
-	if err := controllers.CheckStorage(); err != nil {
-		log.Error().Err(err).Msg("Failed to initialize storage")
-	}
+	//if err := controllers.CheckStorage(); err != nil {
+	//	log.Error().Err(err).Msg("Failed to initialize storage")
+	//}
 
 	// Watch for OS signals
 	sig := make(chan os.Signal, 1)

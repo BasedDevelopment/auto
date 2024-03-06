@@ -1,12 +1,5 @@
 package controllers
 
-import (
-	"os"
-
-	"github.com/BasedDevelopment/auto/internal/config"
-	"github.com/rs/zerolog/log"
-)
-
 var (
 	CloudImages   = []map[string]string{}
 	Images        = []map[string]string{}
@@ -14,6 +7,7 @@ var (
 	CloudInitPath = []map[string]string{}
 )
 
+/*
 func CheckStorage() error {
 	for _, storage := range config.Config.Storage {
 		if !storage.Enabled {
@@ -86,3 +80,4 @@ func (hv *HV) ListDir(path string) ([]string, error) {
 
 	return names, nil
 }
+*/

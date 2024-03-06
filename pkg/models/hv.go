@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// The struct for the hypervisor status (more transient), this is different from the
+// struct in eve, which persists the data to the database.
 type HV struct {
 	Mutex          sync.Mutex            `json:"-"`
 	IP             net.IP                `json:"-"`
