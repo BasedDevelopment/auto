@@ -93,16 +93,19 @@ func (hv *HV) CreateDomain(domID uuid.UUID, req *util.DomainCreateRequest) (err 
 		Strs("args", args).
 		Msg("create domain")
 
-	out, err := exec.Command("virt-install", args...).CombinedOutput()
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("command", "virt-install").
-			Strs("args", args).
-			Str("output", string(out)).
-			Msg("create domain")
-		return err
-	}
+	/*
+		out, err := exec.Command("virt-install", args...).CombinedOutput()
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("command", "virt-install").
+				Strs("args", args).
+				Str("output", string(out)).
+				Msg("create domain")
+			return err
+		}
+	*/
+	out := "temp"
 	log.Debug().
 		Str("output", string(out)).
 		Msg("create domain")
