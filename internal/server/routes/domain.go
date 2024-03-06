@@ -52,30 +52,41 @@ func GetDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteDomain(w http.ResponseWriter, r *http.Request) {
-	domain, err := getDomain(r)
-	if err != nil {
-		eUtil.WriteError(w, r, err, http.StatusNotFound, "Invalid domain ID or can't be found")
-		return
+	domidStr := chi.URLParam(r, "domain")
+	domid, _ := uuid.Parse(domidStr)
+	resp := map[string]interface{}{
+		"domain": domid,
 	}
-
-	for _, disk := range domain.Storages {
-		if err := HV.DeleteDiskFile(disk.Path); err != nil {
-			eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to delete disk")
-			return
-		}
-	}
-
-	if err := HV.DestroyVM(domain); err != nil {
-		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to destroy domain")
-		return
-	}
-
-	if err := HV.UndefineVM(domain); err != nil {
-		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to undefine domain")
-		return
-	}
-
-	if err := eUtil.WriteResponse(domain, w, http.StatusOK); err != nil {
+	if err := eUtil.WriteResponse(resp, w, http.StatusOK); err != nil {
 		eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to marshall/send response")
 	}
+
+	/*
+		domain, err := getDomain(r)
+		if err != nil {
+			eUtil.WriteError(w, r, err, http.StatusNotFound, "Invalid domain ID or can't be found")
+			return
+		}
+
+		for _, disk := range domain.Storages {
+			if err := HV.DeleteDiskFile(disk.Path); err != nil {
+				eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to delete disk")
+				return
+			}
+		}
+
+		if err := HV.DestroyVM(domain); err != nil {
+			eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to destroy domain")
+			return
+		}
+
+		if err := HV.UndefineVM(domain); err != nil {
+			eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to undefine domain")
+			return
+		}
+
+		if err := eUtil.WriteResponse(domain, w, http.StatusOK); err != nil {
+			eUtil.WriteError(w, r, err, http.StatusInternalServerError, "Failed to marshall/send response")
+		}
+	*/
 }
